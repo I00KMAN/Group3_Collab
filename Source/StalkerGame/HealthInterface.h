@@ -29,7 +29,7 @@ public:
 	void C_SubHealth(float Amount);
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "IHealth")
-	float C_GetCurrenthealth();
+	float C_GetCurrentHealth();
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "IHealth")
 	void C_HandlePlayerDeath();
