@@ -30,7 +30,4 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "IMana")
 	float C_GetCurrentMana();
-
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "IMana")
-	void C_HandlePlayerDeath();
 };
