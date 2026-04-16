@@ -7,7 +7,8 @@
 #include "MyCharacter.h"
 #include "TimerManager.h"
 #include "Curves/RichCurve.h"
-#include "Logging/StructuredLog.h"
+#include "Engine/World.h"
+#include "DrawDebugHelpers.h"
 
 
 // Sets default values for this component's properties
@@ -26,12 +27,16 @@ void UC_Crouch::BeginPlay()
 void UC_Crouch::LerpForwardTimer()
 {
 	FTimerManager& TimerManager = GetWorld()->GetTimerManager();
+
+	TimerManager.ClearTimer(FUnCrouchCheckTimerHandle);
+
 	FTimerDelegate timerDelegate;
 
 	TimerManager.ClearTimer(FReverseLerpHandle);
 
 	timerDelegate.BindUObject(this, &UC_Crouch::Lerp, GetWorld()->GetDeltaSeconds());
 	TimerManager.SetTimer(FLerpHandle, timerDelegate, GetWorld()->GetDeltaSeconds(), true);
+	AOwner->Crouch();
 }
 
 void UC_Crouch::ReverseLerpForwardTimer()
@@ -74,11 +79,60 @@ void UC_Crouch::OffsetCamera()
 	offsetAmount = FMath::Lerp(0.f, CrouchHeightOffset * -1.0f, FLerpCurve.GetRichCurveConst()->Eval(LerpAmount));
 	USpringArm->AddLocalOffset({0.0f, 0.0f, offsetAmount - CurrentOffset });
 
-	UE_LOG(LogTemp, Warning, TEXT("Offset Amount: %f"), offsetAmount - CurrentOffset);
-
 	CurrentOffset = offsetAmount;
 }
 
 void UC_Crouch::TryUnCrouch()
 {
+	FTimerManager& TimerManager = GetWorld()->GetTimerManager();
+	FTimerDelegate timerDelegate;
+
+	timerDelegate.BindUObject(this, &UC_Crouch::CheckCanUnCrouch);
+	TimerManager.SetTimer(FUnCrouchCheckTimerHandle, timerDelegate, GetWorld()->GetDeltaSeconds(), true);
+}
+
+void UC_Crouch::CheckCanUnCrouch()
+{
+	UWorld* world = GetWorld();
+
+	if (!world) return;
+
+	FTimerManager& TimerManager = world->GetTimerManager();
+
+	FVector fStartPos = AOwner->GetActorLocation();
+	FVector fEndPos = fStartPos + (AOwner->GetActorUpVector() * UnCrouchOverheadCheckHeight);
+
+	float Radius = 0.0f;
+	float HalfHeight = 0.0f;
+
+	AOwner->GetCapsuleSize(Radius, HalfHeight);
+	FCollisionShape fCapsuleTrace = FCollisionShape::MakeCapsule(Radius, HalfHeight);
+
+	FHitResult fHitResult;
+	FCollisionQueryParams fQueryParams;
+	fQueryParams.AddIgnoredActor(AOwner);
+
+	FName fProfileName = TEXT("BlockAll");
+
+	bool bHit = world->SweepSingleByProfile(
+		fHitResult,
+		fStartPos,
+		fEndPos,
+		FQuat::Identity,
+		fProfileName,
+		fCapsuleTrace,
+		fQueryParams
+	);
+
+	if (!bHit) 
+	{
+		if (AOwner->bIsPeeking)
+		{
+			AOwner->CancelPeek();
+		}
+
+		TimerManager.ClearTimer(FUnCrouchCheckTimerHandle);
+		ReverseLerpForwardTimer();
+		AOwner->UnCrouch();
+	}
 }

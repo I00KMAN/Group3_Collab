@@ -45,6 +45,8 @@ protected:
 	//Check if Uncrouch is possible
 	UFUNCTION(BlueprintCallable)
 	void TryUnCrouch();
+	UFUNCTION(BlueprintCallable)
+	void CheckCanUnCrouch();
 
 	//Lerp Timer Handles
 	UPROPERTY(BlueprintReadWrite, Category="Crouch")
@@ -59,6 +61,8 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Crouch")
 	float CrouchHeightOffset;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Crouch")
+	float UnCrouchOverheadCheckHeight;
 
 private:
 

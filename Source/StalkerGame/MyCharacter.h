@@ -25,6 +25,9 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void CancelPeek();
 
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void GetCapsuleSize(float &Radius, float &HalfHeight);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
