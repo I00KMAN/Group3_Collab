@@ -8,6 +8,9 @@
 
 class UCameraComponent;
 class USpringArmComponent;
+class AMyCharacter;
+
+struct FRichCurve;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent), Abstract, Blueprintable )
 class STALKERGAME_API UC_Crouch : public UActorComponent
@@ -17,40 +20,53 @@ class STALKERGAME_API UC_Crouch : public UActorComponent
 public:	
 	// Sets default values for this component's properties
 	UC_Crouch();
-	
 
 protected:
 	virtual void BeginPlay() override;
-
+	
 	//Components
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Crouch|Components")
-	TSubclassOf<ACharacter> _Owner;
+	TObjectPtr<AMyCharacter> AOwner;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Crouch|Components")
-	TObjectPtr<UCameraComponent> _Camera;
+	TObjectPtr<UCameraComponent> UCamera;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Crouch|Components")
-	TObjectPtr<USpringArmComponent> _SpringArm;	
+	TObjectPtr<USpringArmComponent> USpringArm;
 
 	//Lerp Functions
 	UFUNCTION(BlueprintCallable)
 	void LerpForwardTimer();
 	UFUNCTION(BlueprintCallable)
 	void ReverseLerpForwardTimer();
-	UFUNCTION(BlueprintCallable)
-	void AdjustLerpAmount(float Amount);
+	UFUNCTION()
+	void Lerp(float Amount);
+	UFUNCTION()
+	void OffsetCamera();
 
 	//Check if Uncrouch is possible
 	UFUNCTION(BlueprintCallable)
 	void TryUnCrouch();
+	UFUNCTION(BlueprintCallable)
+	void CheckCanUnCrouch();
 
 	//Lerp Timer Handles
 	UPROPERTY(BlueprintReadWrite, Category="Crouch")
-	FTimerHandle LerpHandle;
+	FTimerHandle FLerpHandle;
 	UPROPERTY(BlueprintReadWrite, Category = "Crouch")
-	FTimerHandle ReverseLerpHandle;
+	FTimerHandle FReverseLerpHandle;
+	UPROPERTY(BlueprintReadWrite, Category = "Crouch")
+	FTimerHandle FUnCrouchCheckTimerHandle;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Crouch")
+	FRuntimeFloatCurve FLerpCurve;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Crouch")
+	float CrouchHeightOffset;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Crouch")
+	float UnCrouchOverheadCheckHeight;
 
 private:
 
 	//Lerp Variables
-	float CurrentOffset;
+	float CurrentOffset = 0.0f;
 	float LerpAmount;
 };
