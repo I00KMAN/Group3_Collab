@@ -15,13 +15,24 @@ public:
 	// Sets default values for this character's properties
 	AMyCharacter();
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Tilt Settings|CPP")
+	bool bIsTilting;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bIsPeeking;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bCanMove;
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void CancelPeek();
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void GetCapsuleSize(float &Radius, float &HalfHeight);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
