@@ -27,6 +27,7 @@ void UC_Peek::HandlePeek(bool canPeek)
 
 void UC_Peek::SetPlayerPeek_Implementation(bool isPeeking)
 {
+	_isPeeking = isPeeking;
 }
 
 
