@@ -10,7 +10,7 @@ class AMyCharacter;
 class UCameraComponent;
 class USpringArmComponent;
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent), Blueprintable)
 class STALKERGAME_API UC_Peek : public UActorComponent
 {
 	GENERATED_BODY()
@@ -47,11 +47,11 @@ private:
 //Variables
 public:
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Crouch|Components")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Peek|Components")
 	TObjectPtr<AMyCharacter> AOwner;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Crouch|Components")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Peek|Components")
 	TObjectPtr<UCameraComponent> UCamera;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Crouch|Components")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Peek|Components")
 	TObjectPtr<USpringArmComponent> USpringArm;
 
 	float _lerpAmount;
