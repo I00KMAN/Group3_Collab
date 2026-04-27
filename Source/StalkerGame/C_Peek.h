@@ -44,10 +44,6 @@ protected:
 	void SetPlayerPeek(bool isPeeking);
 	virtual void SetPlayerPeek_Implementation(bool isPeeking);
 
-
-
-private:
-
 //Variables
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Peek")
@@ -68,12 +64,22 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Peek|Components")
 	TObjectPtr<USpringArmComponent> USpringArm;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Peek")
+	FRuntimeFloatCurve _LerpCurve;
+	UPROPERTY(BlueprintReadWrite, Category = "Peek")
+	bool _isPeeking;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Peek")
+	FVector _cameraPeekOffset;
+
+	FTimerHandle _lerpForwardTimer;
+	FTimerHandle _lerpReverseTimer;
+
 	float _lerpAmount;
 	float _currentEyeHeight;
 	FVector _currentEyeLocation;
-	FVector _cameraPeekOffset;
 	FVector _currentCameraOffsetVector;
+	FVector _previousOffsetVector;
 
-	bool _isPeeking;
+	
 private:
 };

@@ -8,18 +8,58 @@
 
 void UC_Peek::AdjustCameraOffset()
 {
+	FVector vector = FMath::Lerp(FVector(), _currentCameraOffsetVector, _LerpCurve.GetRichCurveConst()->Eval(_lerpAmount));
+	USpringArm->AddLocalOffset(vector - _previousOffsetVector);
+	_previousOffsetVector = vector;
+	AOwner->TurnOnOffRotOnCam_CPP(false);
 }
 
 void UC_Peek::LerpForward()
 {
+	FTimerManager& TimerManager = GetWorld()->GetTimerManager();
+	FTimerDelegate timerDelegate;
+
+	TimerManager.ClearTimer(_lerpReverseTimer);
+
+	timerDelegate.BindUObject(this, &UC_Peek::AdjustLerpAmount, GetWorld()->GetDeltaSeconds());
+	TimerManager.SetTimer(_lerpForwardTimer, timerDelegate, GetWorld()->GetDeltaSeconds(), true);
 }
 
 void UC_Peek::LerpReverse()
 {
+	FTimerManager& TimerManager = GetWorld()->GetTimerManager();
+	FTimerDelegate timerDelegate;
+
+	TimerManager.ClearTimer(_lerpForwardTimer);
+
+	timerDelegate.BindUObject(this, &UC_Peek::AdjustLerpAmount, GetWorld()->GetDeltaSeconds() * -1.0f);
+	TimerManager.SetTimer(_lerpReverseTimer, timerDelegate, GetWorld()->GetDeltaSeconds(), true);
 }
 
 void UC_Peek::AdjustLerpAmount(float amount)
 {
+	float Max = 0.f;
+	float Min = 0.f;
+
+	_LerpCurve.GetRichCurveConst()->GetTimeRange(Min, Max);
+
+	_lerpAmount = FMath::Clamp(_lerpAmount + amount, Min, Max);
+
+	if (Min == _lerpAmount)
+	{
+		GetWorld()->GetTimerManager().ClearTimer(_lerpReverseTimer);
+		AOwner->TurnOnOffRotOnCam_CPP(true);
+		return;
+	}
+	else if (Max == _lerpAmount)
+	{
+		GetWorld()->GetTimerManager().ClearTimer(_lerpForwardTimer);
+		return;
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("Lerp Amount: %f"), _lerpAmount);
+
+	AdjustCameraOffset();
 }
 
 void UC_Peek::HandlePeek_Implementation(bool canPeek)
@@ -115,20 +155,9 @@ void UC_Peek::HandlePeek_Implementation(bool canPeek)
 
 	FMatrix m = t.ToMatrixWithScale();
 	_currentCameraOffsetVector = m.InverseTransformVector(hitResult.Location - UCamera->GetComponentLocation());
-
-	/*AOwner->bCanMove = false;
-	SetPlayerPeek(true);*/
-
-	DrawDebugLine(
-		GetWorld(),
-		UCamera->GetComponentLocation(),
-		_currentCameraOffsetVector + UCamera->GetComponentLocation(),
-		FColor::Green,
-		true,
-		2.0f,
-		0,
-		2.0f
-	);
+	_currentCameraOffsetVector += _cameraPeekOffset;
+	AOwner->bCanMove = false;
+	SetPlayerPeek(true);
 
 	LerpForward();
 }

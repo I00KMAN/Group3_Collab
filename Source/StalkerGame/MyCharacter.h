@@ -26,6 +26,9 @@ public:
 	void CancelPeek();
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void TurnOnOffRotOnCam_CPP(bool canUse);
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void GetCapsuleSize(float &Radius, float &HalfHeight);
 
 protected:
