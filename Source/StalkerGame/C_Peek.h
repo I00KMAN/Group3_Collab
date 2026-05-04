@@ -23,29 +23,39 @@ public:
 	void AdjustCameraOffset();
 
 	//Lerp Logic
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void LerpForward();
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void LerpReverse();
 	UFUNCTION()
 	void AdjustLerpAmount(float amount);
 
-	//Peek Logic
-	UFUNCTION()
-	void HandlePeek(bool canPeek);
+	
 
 protected:
 	//virtual void BeginPlay() override;
 
-	UFUNCTION(BlueprintNativeEvent)
+	//Peek Logic
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void HandlePeek(bool canPeek);
+	virtual void HandlePeek_Implementation(bool canPeek);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void SetPlayerPeek(bool isPeeking);
-
 	virtual void SetPlayerPeek_Implementation(bool isPeeking);
-
-private:
 
 //Variables
 public:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Peek")
+	float _maxCanPeekDistance;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Peek")
+	float _MaxPeekHeight;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Peek")
+	float _MaxDistanceOverhead;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Peek")
+	float _firstRayCheckRadius;
+
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Peek|Components")
 	TObjectPtr<AMyCharacter> AOwner;
@@ -54,7 +64,22 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Peek|Components")
 	TObjectPtr<USpringArmComponent> USpringArm;
 
-	float _lerpAmount;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Peek")
+	FRuntimeFloatCurve _LerpCurve;
+	UPROPERTY(BlueprintReadWrite, Category = "Peek")
 	bool _isPeeking;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Peek")
+	FVector _cameraPeekOffset;
+
+	FTimerHandle _lerpForwardTimer;
+	FTimerHandle _lerpReverseTimer;
+
+	float _lerpAmount;
+	float _currentEyeHeight;
+	FVector _currentEyeLocation;
+	FVector _currentCameraOffsetVector;
+	FVector _previousOffsetVector;
+
+	
 private:
 };
