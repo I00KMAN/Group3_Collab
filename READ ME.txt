@@ -1,0 +1,6 @@
+THESE ARE THE INSTRUCTIONS TO OPEN THE ENGINE FILE.
+
+1) Right click the engine file -> Show more options -> Generate visual studio project files
+2) Open the visual studio file with either Rider or Visual Studio
+3) Run the engine through visual studio or Rider
+
