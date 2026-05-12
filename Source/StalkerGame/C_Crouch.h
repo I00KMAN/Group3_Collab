@@ -47,6 +47,8 @@ protected:
 	void TryUnCrouch();
 	UFUNCTION(BlueprintCallable)
 	void CheckCanUnCrouch();
+	UFUNCTION(BlueprintCallable)
+	void ForceUnCrouch();
 
 	//Lerp Timer Handles
 	UPROPERTY(BlueprintReadWrite, Category="Crouch")
