@@ -136,3 +136,12 @@ void UC_Crouch::CheckCanUnCrouch()
 		AOwner->UnCrouch();
 	}
 }
+
+void UC_Crouch::ForceUnCrouch() 
+{
+	if (AOwner->bIsPeeking)
+	{
+		AOwner->CancelPeek();
+	}
+	AOwner->UnCrouch();
+}
